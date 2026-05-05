@@ -176,6 +176,7 @@ class _LandCardState extends State<LandCard> {
               return const Center(child: CircularProgressIndicator());
             }
 
+            
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
               return Center(
                 child: Column(
@@ -652,6 +653,7 @@ class LandCardd extends StatelessWidget {
           Icon(icon, color: Colors.white, size: 14),
           const SizedBox(width: 6),
           Text(
+            
             text,
             style: const TextStyle(
               color: Colors.white,
