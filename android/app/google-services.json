@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "433084147989",
+    "project_id": "teraland-72e76",
+    "storage_bucket": "teraland-72e76.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:433084147989:android:d97be33466368c334ee11c",
+        "android_client_info": {
+          "package_name": "com.example.arkan_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAua7QjaUvj_2AYl6VeNgxSVZf-PZ8pbJU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
