@@ -67,8 +67,6 @@ class MyTextField extends StatelessWidget {
             borderSide: BorderSide(color: Colors.blue, width: 1.8),
           ),
           suffixIcon: icona,
-
-          // suffixIcon: Icon(Icons.email_outlined),
           contentPadding: EdgeInsets.all(20),
         ),
       ),
