@@ -35,19 +35,7 @@ class AreaList extends StatelessWidget {
               child: AppBar(
                 backgroundColor: const Color(0xFF1F3F45),
                 elevation: 0, // مهم عشان مايبقاش فيه double shadow
-                // centerTitle: true,
                 leading: const NotificationBadge(),
-
-                // title: const Text(
-                //   "تيرا  لاند",
-                //   style: TextStyle(
-                //     color: Color.fromARGB(255, 255, 255, 255),
-                //     fontFamily: 'Din',
-                //     fontWeight: FontWeight.bold,
-                //     fontSize: 24,
-                //     letterSpacing: 1.2,
-                //   ),
-                // ),
                 actions: [
                   const Padding(padding: EdgeInsets.symmetric(horizontal: 8.0)),
                   Builder(
@@ -87,10 +75,7 @@ class AreaList extends StatelessWidget {
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
-                            const SizedBox(height: 30),
-
-                          
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 40),
 
                             const Text(
                               "جاري تحميل البيانات...",
@@ -105,6 +90,19 @@ class AreaList extends StatelessWidget {
                     }
 
                     final areas = snapshot.data!.docs;
+                    // --------------------------------------
+                    String getAreasCountText(int count) {
+                      if (count == 1) {
+                        return 'منطقة واحدة';
+                      } else if (count == 2) {
+                        return 'منطقتين';
+                      } else if (count >= 3 && count <= 10) {
+                        return '$count مناطق';
+                      } else {
+                        return '$count منطقة';
+                      }
+                    }
+                    // ---------------------------------------
 
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -114,9 +112,9 @@ class AreaList extends StatelessWidget {
                           style: TextStyle(fontSize: 20, fontFamily: 'Din'),
                         ),
                         Text(
-                          '${areas.length} مناطق',
+                          getAreasCountText(areas.length),
                           style: const TextStyle(
-                            color: Colors.blue,
+                            color: const Color(0xFF1F3F45),
                             fontSize: 18,
                           ),
                         ),
@@ -149,7 +147,7 @@ class AreaList extends StatelessWidget {
                           onTap: () {
                             goTo(
                               context,
-                              LandCard(
+                              LandListView(
                                 areaId: doc.id,
                                 areaName: data['name'] ?? '',
                               ),

@@ -1,12 +1,10 @@
 import 'package:arkan_app/screens/imports.dart';
 import 'package:arkan_app/services/auth_service.dart';
 import 'package:arkan_app/shared/themes/textfield.dart' show MyTextField;
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
-
   @override
   State<SignupScreen> createState() => _SignupScreenState();
 }

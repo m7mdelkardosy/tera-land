@@ -49,9 +49,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: Text("يجب تسجيل الدخول")),
-      );
+      return const Scaffold(body: Center(child: Text("يجب تسجيل الدخول")));
     }
 
     return Directionality(
@@ -120,61 +118,87 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
                 return Card(
                   elevation: isRead ? 0.5 : 2,
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   color: isRead ? Colors.white : Colors.blue[50],
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
 
                   child: ListTile(
-                    onTap: () async {
-                      await FirebaseFirestore.instance
+                    onTap: () {
+                      final String notifId = docs[index].id;
+                      final String? tappedAreaId = areaId;
+                      final String? tappedAreaName = areaName;
+                      final dynamic rawLandNum = data['landNum'];
+
+                      // ✅ Mark as read
+                      FirebaseFirestore.instance
                           .collection('users')
                           .doc(user!.uid)
                           .collection('notifications')
-                          .doc(docs[index].id)
+                          .doc(notifId)
                           .update({'isRead': true});
 
-                      if (areaId != null && areaName != null) {
-                        try {
-                          var landCheck = await FirebaseFirestore.instance
-                              .collection('Collec_Areas')
-                              .doc(areaId)
-                              .get();
+                      if (tappedAreaId == null || tappedAreaName == null)
+                        return;
+                      if (rawLandNum == null) return;
 
-                          if (!landCheck.exists) {
-                            if (mounted) {
+                      // ✅ نجيب كل الأراضي في المنطقة دي ونقارن يدوي
+                      FirebaseFirestore.instance
+                          .collection('Collec_Areas')
+                          .doc(tappedAreaId)
+                          .collection('Lands')
+                          .get()
+                          .then((snapshot) {
+                            if (!mounted) return;
+
+                            // ✅ نقارن الـ landNum كـ String عشان نتفادى مشكلة النوع
+                            final String searchLandNum = rawLandNum
+                                .toString()
+                                .trim();
+
+                            final bool landExists = snapshot.docs.any((doc) {
+                              final docData = doc.data();
+                              final String docLandNum =
+                                  docData['landNum']?.toString().trim() ?? '';
+                              return docLandNum == searchLandNum;
+                            });
+
+                            if (!mounted) return;
+
+                            // ❌ القطعة مش موجودة
+                            if (!landExists) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
-                                    "هذه الأرض تم حذفها أو غير موجودة حالياً",
+                                    "هذه القطعة تم حذفها أو غير موجودة حالياً",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(fontFamily: 'Cairo'),
                                   ),
-                                  backgroundColor: const Color(0xFF1F3F45),
+                                  backgroundColor: Color(0xFF1F3F45),
                                 ),
                               );
+                              return;
                             }
-                            return;
-                          }
 
-                          if (mounted) {
+                            // ✅ القطعة موجودة → نفتح الصفحة
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => LandCard(
-                                  areaId: areaId,
-                                  areaName: areaName,
-                                  initialSearch: data['landNum'],
+                                builder: (context) => LandListView(
+                                  areaId: tappedAreaId,
+                                  areaName: tappedAreaName,
+                                  initialSearch: searchLandNum,
                                 ),
                               ),
                             );
-                          }
-                        } catch (e) {
-                          print("Error checking land: $e");
-                        }
-                      }
+                          })
+                          .catchError((e) {
+                            debugPrint("Error checking land: $e");
+                          });
                     },
 
                     leading: CircleAvatar(
@@ -195,10 +219,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 16,
-                        fontWeight:
-                            isRead ? FontWeight.normal : FontWeight.bold,
-                        color:
-                            isRead ? Colors.black54 : Colors.blue.shade900,
+                        fontWeight: isRead
+                            ? FontWeight.normal
+                            : FontWeight.bold,
+                        color: isRead ? Colors.black54 : Colors.blue.shade900,
                       ),
                     ),
 

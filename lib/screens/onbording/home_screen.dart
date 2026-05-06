@@ -1,6 +1,7 @@
 // import 'package:arkan_app/screens/login/login_screen.dart';
 // import 'package:arkan_app/services/navigation.dart';
 import 'package:arkan_app/screens/MapsPage.dart';
+import 'package:arkan_app/services/auth_service.dart';
 import 'package:arkan_app/shared/themes/colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -76,10 +77,7 @@ class AppDrawer extends StatelessWidget {
                     ),
 
                     leading: Icon(Icons.exit_to_app),
-                    onTap: () async {
-                      await FirebaseAuth.instance.signOut();
-
-                      Navigator.pop(context); // إغلاق الدراور
+                    onTap: ()  {   Auth().signOut(context);
                     },
                   ),
                   Divider(height: 9, thickness: 0.3, color: Colors.blueGrey),

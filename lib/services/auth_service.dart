@@ -1,4 +1,4 @@
-import 'package:arkan_app/screens/my_areas.dart';
+import 'package:arkan_app/screens/login/login_screen.dart';
 import 'package:arkan_app/services/area_gate.dart';
 import 'package:arkan_app/services/navigation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,21 +10,29 @@ final GlobalKey<ScaffoldMessengerState> messengerKey =
     GlobalKey<ScaffoldMessengerState>();
 
 class Auth {
+  // ✅ حماية من الضغط المتكرر
+  static bool _isLoading = false;
+
+  // ======================== Create Account ========================
+
   Future<void> createUserByEmail({
-    required String name, 
+    required String name,
     required String email,
     required String password,
-    
   }) async {
+    if (_isLoading) return;
+    _isLoading = true;
+
     try {
-         UserCredential userCredential =
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      
+
       await userCredential.user!.updateDisplayName(name);
-       await FirebaseFirestore.instance
+
+      await FirebaseFirestore.instance
           .collection('users')
           .doc(userCredential.user!.uid)
           .set({
@@ -32,7 +40,7 @@ class Auth {
         'email': email,
         'createdAt': DateTime.now(),
       });
-    
+
       await userCredential.user!.reload();
 
       await sendEmailVerification();
@@ -43,29 +51,43 @@ class Auth {
         showSnackBar('الباسورد ضعيف');
       } else if (e.code == 'email-already-in-use') {
         showSnackBar('الإيميل مستخدم بالفعل');
+      } else {
+        showSnackBar('خطأ في إنشاء الحساب');
       }
     } catch (e) {
-      showSnackBar('حصل خطأ');
+      debugPrint('Create account error: $e');
+      showSnackBar('حصل خطأ غير متوقع');
+    } finally {
+      _isLoading = false;
     }
   }
+
+  // ======================== Email Verification ========================
 
   Future<void> sendEmailVerification() async {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user != null && !user.emailVerified) {
-      await user.sendEmailVerification();
-
-      showSnackBar(
-        'بعتنالك لينك على الإيميل، افتحه وارجع سجل دخول 👌',
-      );
+      try {
+        await user.sendEmailVerification();
+        showSnackBar('بعتنالك لينك على الإيميل، افتحه وارجع سجل دخول 👌');
+      } catch (e) {
+        debugPrint('Email verification error: $e');
+        showSnackBar('حصل خطأ في إرسال رسالة التفعيل');
+      }
     }
   }
+
+  // ======================== Login ========================
 
   Future<void> userLogin({
     required String email,
     required String password,
-    required BuildContext context, // 👈 لسه محتاجينه للـ Navigation
+    required BuildContext context,
   }) async {
+    if (_isLoading) return;
+    _isLoading = true;
+
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
@@ -77,13 +99,12 @@ class Auth {
       final user = FirebaseAuth.instance.currentUser;
 
       if (user != null && user.emailVerified) {
-       goToAndRemoveAll(context, AreaGate());
+        if (context.mounted) {
+          goToAndRemoveAll(context, AreaGate());
+        }
       } else {
-        showSnackBar(
-          'من فضلك فعل الإيميل الأول قبل تسجيل الدخول',
-        );
+        showSnackBar('من فضلك فعل الإيميل الأول قبل تسجيل الدخول');
       }
-
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         showSnackBar('لا يوجد مستخدم بهذا الإيميل');
@@ -92,15 +113,61 @@ class Auth {
       } else {
         showSnackBar('خطأ في تسجيل الدخول');
       }
+    } catch (e) {
+      debugPrint('Login error: $e');
+      showSnackBar('حصل خطأ غير متوقع');
+    } finally {
+      _isLoading = false;
     }
   }
 
-  // ✅ SnackBar بدون context
+  // ======================== Sign Out ========================
+
+  static bool _isSigningOut = false;
+
+  Future<void> signOut(BuildContext context) async {
+    // ✅ منع الضغط مرتين
+    if (_isSigningOut) return;
+    _isSigningOut = true;
+
+    try {
+      // ✅ لو جوه Drawer نقفله الأول
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+
+      // ✅ Sign out
+      await FirebaseAuth.instance.signOut();
+
+      // ✅ يروح لصفحة تسجيل الدخول ويمسح كل الصفحات القديمة
+      if (context.mounted) {
+        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => LoginScreen(), 
+          ),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      debugPrint('Sign out error: $e');
+      showSnackBar('حدث خطأ أثناء تسجيل الخروج');
+    } finally {
+      _isSigningOut = false;
+    }
+  }
+
+  // ======================== SnackBar ========================
+
   void showSnackBar(String message) {
     messengerKey.currentState?.showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontFamily: 'Cairo'),
+        ),
         duration: const Duration(seconds: 3),
+        backgroundColor: const Color(0xFF1F3F45),
       ),
     );
   }
