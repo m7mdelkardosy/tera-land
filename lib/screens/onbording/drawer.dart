@@ -1,5 +1,4 @@
-// import 'package:arkan_app/screens/login/login_screen.dart';
-// import 'package:arkan_app/services/navigation.dart';
+
 import 'package:arkan_app/screens/MapsPage.dart';
 import 'package:arkan_app/services/auth_service.dart';
 import 'package:arkan_app/shared/themes/colors.dart';
@@ -53,9 +52,9 @@ class AppDrawer extends StatelessWidget {
                         color: mainTxt,
                       ),
                     ),
-                    leading:Icon(Icons.picture_as_pdf, color: Colors.red),
+                    leading: Icon(Icons.picture_as_pdf, color: Colors.red),
                     onTap: () {
-                      Navigator.pop(context); // يقفل الدراور
+                      Navigator.pop(context);
 
                       Navigator.push(
                         context,
@@ -77,7 +76,8 @@ class AppDrawer extends StatelessWidget {
                     ),
 
                     leading: Icon(Icons.exit_to_app),
-                    onTap: ()  {   Auth().signOut(context);
+                    onTap: () {
+                      Auth().signOut(context);
                     },
                   ),
                   Divider(height: 9, thickness: 0.3, color: Colors.blueGrey),
@@ -86,7 +86,37 @@ class AppDrawer extends StatelessWidget {
             ),
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [Text('Developed by \n Geemy Elkardosy @2026')],
+              children: [
+                Text(
+                  'Developed by',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Color.fromARGB(255, 121, 116, 116),
+                    fontFamily: 'Cairo',
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                const Text(
+                  'Geemy Elkardosy @',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color.fromARGB(255, 121, 116, 116),
+                    fontFamily: 'Cairo',
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  ' ${DateTime.now().year} All rights reserved ©',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: const Color.fromARGB(255, 156, 151, 151),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
             ),
           ],
         ),

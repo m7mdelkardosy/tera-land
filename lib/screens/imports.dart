@@ -1,4 +1,4 @@
-export 'onbording/home_screen.dart';
+export 'onbording/drawer.dart';
 export 'onbording/onboarding1.dart';
 export 'onbording/splashscreen.dart';
 export 'add_lands.dart';
@@ -7,7 +7,7 @@ export 'my_areas.dart';
 export 'area_listUi.dart';
 export 'my_lands.dart';
 export 'add_area.dart';
-export 'login/forget_passord.dart';
+export 'login/email_verification_screen.dart';
 export 'login/login_screen.dart';
-export 'login/reset_passowrd.dart';
+export 'login/reset_password_screen.dart';
 export 'login/signup_screen.dart';

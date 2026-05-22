@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:arkan_app/screens/imports.dart';
 import 'package:arkan_app/services/auth_service.dart';
 import 'package:arkan_app/shared/themes/textfield.dart' show MyTextField;
@@ -11,6 +12,7 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   bool isObscure = true;
+  bool _isLoading = false;
   var email = TextEditingController();
   var password = TextEditingController();
   var name = TextEditingController();
@@ -75,17 +77,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       padding: const EdgeInsets.fromLTRB(0, 2, 25, 25),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          // Text(
-                          //   'مرحبا بعودتك ! \n لقد افتقدناك كثيرًا',
-
-                          //   style: TextStyle(
-                          //     fontSize: 25,
-                          //     color: const Color.fromARGB(255, 14, 19, 44),
-                          //     fontFamily: 'ibm',
-                          //   ),
-                          // ),
-                        ],
+                        children: [],
                       ),
                     ),
                     SizedBox(height: 5),
@@ -174,14 +166,9 @@ class _SignupScreenState extends State<SignupScreen> {
                     SizedBox(height: 15),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        //   TextButton(
-                        //     onPressed: () {},
-                        //     child: Text('نسيت كلمة المرور '),
-                        //   ),
-                      ],
+                      children: [],
                     ),
-                    // SizedBox(height: 5),
+
                     SizedBox(
                       width: 250,
                       height: 60,
@@ -193,7 +180,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     name: name.text,
                                     email: email.text,
                                     password: password.text,
-                                    
+                                    context: context,
                                   );
                                 }
                               }
@@ -215,7 +202,6 @@ class _SignupScreenState extends State<SignupScreen> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                         ),
-                        // padding:WidgetStatePropertyAll(EdgeInsets.all(10))
                       ),
                     ),
 
@@ -261,7 +247,11 @@ class _SignupScreenState extends State<SignupScreen> {
                           child: Directionality(
                             textDirection: TextDirection.ltr,
                             child: ElevatedButton.icon(
-                              onPressed: () {},
+                              onPressed:  () async {
+                                      await Auth().signInWithGoogle(
+                                        context: context,
+                                      );
+                                    },
                               icon: Image.asset(
                                 'assets/images/1.png',
                                 width: 25,
@@ -292,8 +282,11 @@ class _SignupScreenState extends State<SignupScreen> {
                           width: 130,
                           child: Directionality(
                             textDirection: TextDirection.ltr,
+
                             child: ElevatedButton.icon(
-                              onPressed: () {},
+                              onPressed: () {
+                                Auth().signInWithApple(context: context);
+                              },
                               icon: Image.asset(
                                 'assets/images/apple.png',
                                 width: 25,

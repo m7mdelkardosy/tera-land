@@ -1,6 +1,7 @@
 import 'package:arkan_app/screens/add_area.dart';
 import 'package:arkan_app/screens/imports.dart';
 import 'package:arkan_app/screens/land_listview.dart';
+import 'package:arkan_app/screens/onbording/drawer.dart';
 import 'package:arkan_app/services/navigation.dart';
 // import 'package:arkan_app/services/notification.dart';
 import 'package:arkan_app/services/notification_badge.dart';

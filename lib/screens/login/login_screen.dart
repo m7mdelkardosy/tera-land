@@ -1,10 +1,7 @@
 import 'package:arkan_app/screens/imports.dart';
 import 'package:arkan_app/services/auth_service.dart';
 import 'package:arkan_app/shared/themes/textfield.dart' show MyTextField;
-// import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:awesome_dialog/awesome_dialog.dart';
-// import 'package:arkan_app/services/navigation.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -110,8 +107,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         TextButton(
-                          onPressed: () {},
-                          child: Text('نسيت كلمة المرور '),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ResetPasswordScreen(),
+                              ),
+                            );
+                          },
+                          child: Text('نسيت كلمة المرور ',style:TextStyle(color: Colors.blue)),
                         ),
                       ],
                     ),
@@ -146,7 +150,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadiusGeometry.circular(15),
                             ),
                           ),
-                          // padding:WidgetStatePropertyAll(EdgeInsets.all(10))
                         ),
                       ),
                     ),
