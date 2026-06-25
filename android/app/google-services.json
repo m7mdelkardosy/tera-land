@@ -12,7 +12,20 @@
           "package_name": "com.example.arkan_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "433084147989-av6gv1sjhl0ruuotsceoc6ol81qisle2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.arkan_app",
+            "certificate_hash": "1f239ae4c4ccb46b1fc2fb053d31310ef1973aaa"
+          }
+        },
+        {
+          "client_id": "433084147989-976ep8gd1grgtmn0ahq7eqgbcfknq5u9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAua7QjaUvj_2AYl6VeNgxSVZf-PZ8pbJU"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "433084147989-976ep8gd1grgtmn0ahq7eqgbcfknq5u9.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "433084147989-n6ll2fr9l1267r23490ek214poobeh39.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.arkanApp"
+              }
+            }
+          ]
         }
       }
     }

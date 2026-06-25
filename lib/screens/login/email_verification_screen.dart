@@ -43,7 +43,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   void _startAutoCheck() {
     _autoCheckTimer?.cancel();
-    _autoCheckTimer = Timer.periodic(const Duration(seconds: 7), (timer) {
+    _autoCheckTimer = Timer.periodic(const Duration(seconds: 15), (timer) {
       _checkEmailVerified(isAutoCheck: true);
     });
   }

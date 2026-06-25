@@ -195,7 +195,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Directionality(
                             textDirection: TextDirection.ltr,
                             child: ElevatedButton.icon(
-                              onPressed: () {},
+                                onPressed:  () async {
+                                      await Auth().signInWithGoogle(
+                                        context: context,
+                                      );
+                                    },
                               icon: Image.asset(
                                 'assets/images/1.png',
                                 width: 25,

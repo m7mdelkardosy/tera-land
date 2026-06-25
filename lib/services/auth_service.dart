@@ -79,62 +79,57 @@ class Auth {
     }
   }
 
-  // ======================== Google Sign In ========================
+    // ======================== Google Sign In v7.2 (الحل النهائي) ========================
   Future<void> signInWithGoogle({required BuildContext context}) async {
     if (_isLoading) return;
     _isLoading = true;
 
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
-      // await googleSignIn.initialize(
-      //   serverClientId:
-      //       '433084147989-976ep8gd1grgtmn0ahq7eqgbcfknq5u9.apps.googleusercontent.com',
-      // );
 
-      // ✅ بدء عملية تسجيل الدخول
-      GoogleSignInAccount? googleUser;
+      // 1️⃣ authenticate مع scopeHint
+      final GoogleSignInAccount googleUser = await googleSignIn.authenticate(
+        scopeHint: ['email', 'profile'],
+      );
 
-      try {
-      googleUser = await googleSignIn.authenticate();
-      } catch (e) {
-        debugPrint("Google Sign-In cancelled/failed: $e");
-        _isLoading = false;
-        return;
-      }
-
-      // ✅ لو المستخدم ألغى
       if (googleUser == null) {
         _isLoading = false;
         return;
       }
 
-      // ✅ الحصول على بيانات المصادقة
-      final googleAuth = await googleUser.authentication;
-      final idToken = googleAuth.idToken;
+      // 2️⃣ idToken - synchronous (من غير await)
+      final googleAuth = googleUser.authentication;
+      final String? idToken = googleAuth.idToken;
 
-      if (idToken == null) {
-        showSnackBar('فشل الحصول على بيانات المصادقة');
-        _isLoading = false;
-        return;
-      }
+      // 3️⃣ accessToken - عن طريق authorizationClient
+      final authClient = googleSignIn.authorizationClient;
+      final authorization = await authClient.authorizationForScopes([
+        'email',
+        'profile',
+      ]);
 
-      // ✅ إنشاء credential
-      final credential = GoogleAuthProvider.credential(idToken: idToken);
+      // لو authorizationForScopes رجعت null نجرب authorizeScopes
+      final String? accessToken = authorization?.accessToken ??
+          (await authClient.authorizeScopes(['email', 'profile'])).accessToken;
 
-      // ✅ تسجيل الدخول في Firebase
-      final userCredential = await FirebaseAuth.instance.signInWithCredential(
-        credential,
+      // 4️⃣ إنشاء credential بالتوكنين
+      final credential = GoogleAuthProvider.credential(
+        idToken: idToken,
+        accessToken: accessToken,
       );
 
-      final user = userCredential.user;
+      // 5️⃣ Firebase
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
 
+      final user = userCredential.user;
       if (user == null) {
         showSnackBar('حدث خطأ، حاول مرة أخرى');
         _isLoading = false;
         return;
       }
 
-      // ✅ حفظ بيانات المستخدم في Firestore (لو أول مرة)
+      // 6️⃣ Firestore
       final userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
@@ -154,8 +149,6 @@ class Auth {
       showSnackBar('تم تسجيل الدخول بنجاح 🎉');
       goToAndRemoveAll(context, AreaGate());
     } on FirebaseAuthException catch (e) {
-      debugPrint("Firebase error: ${e.code} - ${e.message}");
-
       if (e.code == 'account-exists-with-different-credential') {
         showSnackBar('هذا البريد مسجل بطريقة أخرى');
       } else if (e.code == 'invalid-credential') {
@@ -163,9 +156,8 @@ class Auth {
       } else {
         showSnackBar('خطأ: ${e.message}');
       }
-    } catch (e, stack) {
-      debugPrint("ERROR: $e");
-      debugPrint("$stack");
+    } catch (e) {
+      debugPrint("Google Sign-In Error: $e"); // ← ده هيظهرلك الخطأ الحقيقي
       showSnackBar('حدث خطأ غير متوقع');
     } finally {
       _isLoading = false;
